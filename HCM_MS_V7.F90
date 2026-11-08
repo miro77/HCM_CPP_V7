@@ -433,7 +433,7 @@
 	  		    CBR_D = 50.0
 	  		    ERP_ref_Tx = 16.0
 	  		    Info(4) = .FALSE.
-			ELSEIF ((Tx_frequency .GE. 862.0) .AND. (Tx_frequency .LE. 960.0)) THEN
+			ELSEIF ((Tx_frequency .GE. 870.0) .AND. (Tx_frequency .LE. 960.0)) THEN
 	  		    Perm_FS = 26.0
 	  		    CBR_D = 30.0
 	  		    ERP_ref_Tx = 13.0
