@@ -101,6 +101,52 @@
 !
 	HCM_error = 0
 !
+!	Clear all output values. Otherwise the results of the previous call
+!	are returned after an error or if the calculation ends early
+!	(e.g. D_sea_calculated for distances < 1 km).
+	Distance = 0D0
+	Dir_Tx_Rx = 0D0
+	Dir_Rx_Tx = 0D0
+	V_angle_Tx_Rx = 0D0
+	V_angle_Rx_Tx = 0D0
+	D_sea_calculated = 0D0
+	Delta_frequency = 0
+	H_Datab_Tx = 0
+	H_Datab_Rx = 0
+	H_Tx = 0
+	H_Rx = 0
+	PN = 0
+	Channel_sp_Tx = 0
+	Channel_sp_Rx = 0
+	Heff = 0.0
+	Heff_Tx = 0.0
+	Heff_Rx = 0.0
+	Dh = 0.0
+	Dh_corr = 0.0
+	Calculated_FS = 0.0
+	Perm_FS = 0.0
+	Perm_FS_from_table = 0.0
+	Prot_margin = 0.0
+	CBR_D = 0.0
+	ERP_ref_Tx = 0.0
+	Tx_TCA = 0.0
+	Rx_TCA = 0.0
+	Tx_TCA_corr = 0.0
+	Rx_TCA_corr = 0.0
+	Land_FS = 0.0
+	Sea_FS = 0.0
+	Tx_ant_corr = 0.0
+	Rx_ant_corr = 0.0
+	Tx_ant_type_corr = 0.0
+	Rx_ant_type_corr = 0.0
+	Corr_delta_f = 0.0
+	Power_to_Rx = 0.0
+	Free_space_FS = 0.0
+	H_diff_angle_Tx_Rx = 0.0
+	V_diff_angle_Tx_Rx = 0.0
+	H_diff_angle_Rx_Tx = 0.0
+	V_diff_angle_Rx_Tx = 0.0
+!
 !	Clear all Info's
 !
 	DO I = 1, 20
