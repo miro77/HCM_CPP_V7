@@ -466,12 +466,14 @@
 		END DO
 	  END IF
 !
-!	  Calculate all hc ('HDC'):
+!	  Calculate all hc ('HDC'): clearance between the line of sight
+!	  (top of Tx antenna to top of Rx antenna, Annex 5, Appendix 1, Figure 1)
+!	  and the (normalised) terrain; Tx and Rx ground level are 0 m here.
 !	  Calculate the 1st Fresnel zone 'HDF':
 !	  Calculate all differences 'HDD':
 !
 	  DO I = 1, J
-		HDC(I) = H_AntRx * PD * I / Distance - HDZ(I)
+		HDC(I) = H_AntTx + (H_AntRx - H_AntTx) * PD * I / Distance - HDZ(I)
 		X = PD*I*(Distance-PD*I)
 		IF (X .LE. 0.0) THEN
 			HDF(I) = 0.0
