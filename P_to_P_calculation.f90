@@ -234,6 +234,9 @@
 !		Calculate new co-ordinates:
 		CALL Position_of_mobile ( LongTx, LatTx, LongRx, LatRx, &
 					New_LongTx, New_LatTx, New_LongRx, New_LatRx )
+!		Missing borderline file (1036/1037) or overlapping service areas
+!		(Info(7)): stop here, Calculated_FS stays 999.9 and Distance 0.
+		IF ((HCM_Error .NE. 0) .OR. Info(7)) RETURN
 	ELSE
 		New_LongTx = LongTx
 		New_LatTx  = LatTx
