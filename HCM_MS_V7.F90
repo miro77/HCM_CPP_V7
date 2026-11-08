@@ -564,6 +564,10 @@
 		CALL P_to_P_calculation (LongTx, LatTx, LongRx, LatRx)
 	END IF
 !
+!	Do not continue after an error: Permissble_FS_calculation would overwrite
+!	the error code of the field strength calculation with its own one.
+	IF (HCM_error .NE. 0) RETURN
+!
 	CALL Permissble_FS_calculation ()
 !
 	Prot_margin = Perm_FS - Calculated_FS
