@@ -368,6 +368,11 @@
 !
 	END IF			! IF (Heff .GE. 10.0) THEN	
 !
+!	The field strength is limited to the free space field strength
+!	(Annex 5, Appendix 2, 1.1):
+	IF (Land_FS_1kW .GT. E_free_1kW) Land_FS_1kW = E_free_1kW
+	IF (Sea_FS_1kW  .GT. E_free_1kW) Sea_FS_1kW  = E_free_1kW
+!
 	RETURN
 !
 	END SUBROUTINE Get_FS_from_figures
