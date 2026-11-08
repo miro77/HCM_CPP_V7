@@ -1,0 +1,254 @@
+diff -ru orig/HCM_MS_V7.F90 mod/HCM_MS_V7.F90
+--- orig/HCM_MS_V7.F90
++++ mod/HCM_MS_V7.F90
+@@ -22,7 +22,7 @@
+ !
+ 	IMPLICIT NONE
+ !
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongTx, LatTx, LongRx, LatRx, CI
+ 	INTEGER*4			I, IOS, IMR
+diff -ru orig/HCMMS_V7_DLL.F90 mod/HCMMS_V7_DLL.F90
+--- orig/HCMMS_V7_DLL.F90
++++ mod/HCMMS_V7_DLL.F90
+@@ -18,7 +18,7 @@
+ !
+ 	IMPLICIT	NONE
+ !	Include the interface definitions:
+-	INCLUDE			   'HCM_MS_V7_definitions.F90'
++	INCLUDE			   'HCM_MS_V7_definitions.f90'
+ !
+ 	INTEGER*2			I_H_Datab_Tx, I_H_Datab_Rx
+ 	INTEGER*4			I_HCM_error, I_C_mode, I_bor_dis, Ta, Te
+@@ -34,6 +34,13 @@
+ 	CHARACTER*(*)		I_str 
+ 	LOGICAL				DEBUG, doit
+ 	BYTE				IMR
++#if defined(__GFORTRAN__) && defined(HCM_STDCALL)
++!	gfortran 32-bit build (build.sh passes -DHCM_STDCALL): __stdcall like
++!	Compaq Visual Fortran (callee cleans stack; the hidden length of I_str
++!	follows I_str, which is the last argument). The export name
++!	"HCMMS_V7_DLL" is set by build.sh via a generated .def file.
++	!GCC$ ATTRIBUTES STDCALL :: HCMMS_V7_DLL
++#endif
+ !
+ !
+ !	***********************************************************************
+diff -ru orig/Line_calculation.f90 mod/Line_calculation.f90
+--- orig/Line_calculation.f90
++++ mod/Line_calculation.f90
+@@ -44,7 +44,7 @@
+ !
+ 	IMPLICIT NONE
+ !
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongTx, LatTx, LongRx, LatRx
+ !
+@@ -92,7 +92,7 @@
+ !
+ !	get additionally all borderline centerpoints of the affected coutry:
+ 	OPEN (UNIT=3, FILE=TRIM(Border_path) // '/' // BorderFile(1:7) // '000', &
+-		STATUS='OLD', ACCESS='DIRECT',RECL=176, MODE='READ', IOSTAT=IOS)
++		STATUS='OLD', ACCESS='DIRECT',RECL=176, ACTION='READ', IOSTAT=IOS)
+ !
+ 	IF (IOS .NE. 0) THEN
+ 	  HCM_Error= 1048
+@@ -120,7 +120,7 @@
+ !
+ !	  Open line file and cache full line:
+ 	OPEN (UNIT=3, FILE=TRIM(Border_path) // '/' // BorderFile, &
+-		STATUS='OLD', ACCESS='DIRECT',RECL=176, MODE='READ', IOSTAT=IOS)
++		STATUS='OLD', ACCESS='DIRECT',RECL=176, ACTION='READ', IOSTAT=IOS)
+ !
+ 	IF (IOS .NE. 0) THEN
+ 	  HCM_Error= 1048
+@@ -356,7 +356,7 @@
+ !
+ 	IMPLICIT			NONE
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongLi, LatLi, LongTx, LatTx
+ 	REAL				d2b
+diff -ru orig/P_to_P_calculation.f90 mod/P_to_P_calculation.f90
+--- orig/P_to_P_calculation.f90
++++ mod/P_to_P_calculation.f90
+@@ -179,7 +179,7 @@
+ 	IMPLICIT		   NONE
+ !
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongTx, LatTx, LongRx, LatRx
+ !
+@@ -621,7 +621,7 @@
+ 		IF (Distance .GT. 1.0D0) THEN
+ 		  DO I = 1, PN      
+ !			Test, if morphological information = 'sea'
+-			IF (BITEST(M_Prof(I),0)) THEN
++			IF (BTEST(M_Prof(I),0)) THEN
+ 				IF (null) THEN
+ 					J1 = J1 + 1 
+ 				  ELSE
+diff -ru orig/Permissible_FS_calculation.f90 mod/Permissible_FS_calculation.f90
+--- orig/Permissible_FS_calculation.f90
++++ mod/Permissible_FS_calculation.f90
+@@ -81,7 +81,7 @@
+ 	IMPLICIT		NONE
+ !
+ !	Include definitions:
+-	INCLUDE			'HCM_MS_V7_definitions.F90'
++	INCLUDE			'HCM_MS_V7_definitions.f90'
+ !
+ 	INTEGER*4		IOS, I, CSXR, CSXT
+ !
+diff -ru orig/Point_info.f90 mod/Point_info.f90
+--- orig/Point_info.f90
++++ mod/Point_info.f90
+@@ -118,7 +118,7 @@
+ !
+ 	IMPLICIT	NONE
+ !
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	Long, Lat
+ 	INTEGER(2)			Height, M_Type
+@@ -169,12 +169,12 @@
+ !	open topo
+ 		OPEN (UNIT=5, FILE=TRIM(Topo_path) // '/' // FN(1:4) // '/' // FN // 'e',  &
+ 		ACCESS='DIRECT',RECL=202*(RESH), STATUS='OLD', &
+-		ERR=36, MODE='READ')
++		ERR=36, ACTION='READ')
+ !	open morpho
+ 		IF (with_morpho) THEN
+ 			CLOSE (UNIT=6)
+ 			OPEN (UNIT=6, FILE=TRIM(Morpho_path) // '/' // FN(1:4) // '/' // FN // 'm',  &
+-				ACCESS='DIRECT',RECL=202*(RESH), STATUS='OLD', IOSTAT=OLD_R, MODE='READ')
++				ACCESS='DIRECT',RECL=202*(RESH), STATUS='OLD', IOSTAT=OLD_R, ACTION='READ')
+ 			IF (OLD_R .NE. 0) THEN
+ 				Info(16) = .TRUE.
+ 				with_morpho = .FALSE.
+@@ -225,7 +225,7 @@
+ !	calculate height P
+ 	H12 = DBLE(H1) + DBLE(H2 - H1) * LORR
+ 	H34 = DBLE(H3) + DBLE(H4 - H3) * LORR
+-	Height = IIDNNT(H12 + (H34 - H12) * LARR)
++	Height = INT(NINT(H12 + (H34 - H12) * LARR),2)
+ !
+ 	RETURN
+ !
+diff -ru orig/Position_of_mobile.f90 mod/Position_of_mobile.f90
+--- orig/Position_of_mobile.f90
++++ mod/Position_of_mobile.f90
+@@ -22,7 +22,7 @@
+ 	IMPLICIT			NONE
+ !
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ !
+ 	DOUBLE PRECISION	LongTx, LatTx, LongRx, LatRx
+@@ -159,7 +159,7 @@
+ !
+ 	IMPLICIT			NONE
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	Dir, Long, Lat
+ 	REAL				ServiceArea
+@@ -186,7 +186,7 @@
+ 	BY = N_Lat
+ !
+ 	OPEN (UNIT=8, FILE=TRIM(Border_path) // '/' // Country // '.all', &
+-          STATUS='OLD', ACCESS='DIRECT',RECL=176, MODE='READ', IOSTAT=IOS)
++          STATUS='OLD', ACCESS='DIRECT',RECL=176, ACTION='READ', IOSTAT=IOS)
+ 	IF (IOS .NE. 0) THEN
+ 	  Error = 1
+ 	  RETURN
+@@ -241,7 +241,7 @@
+ !
+ 	IMPLICIT			NONE
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	Long, Lat, N_Long, N_Lat, LongX, LatX
+ 	REAL				ServiceArea
+@@ -258,7 +258,7 @@
+ 	MAXDI = 1.0D7
+ !
+ 	OPEN (UNIT=8, FILE=TRIM(Border_path) // '/' // Country // '.all', &
+-		STATUS='OLD', ACCESS='DIRECT',RECL=176, MODE='READ', IOSTAT=IOS)
++		STATUS='OLD', ACCESS='DIRECT',RECL=176, ACTION='READ', IOSTAT=IOS)
+ 	IF (IOS .NE. 0) RETURN
+ !
+ !	Calculate whole borderline
+@@ -349,7 +349,7 @@
+ 	IMPLICIT	NONE
+ !
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongTx, LatTx, LongRx, LatRx
+ 	DOUBLE PRECISION	New_LongTx, New_LatTx
+@@ -387,7 +387,7 @@
+ 	IMPLICIT	NONE
+ !
+ !	Include the interface definitions:
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongTx, LatTx, LongRx, LatRx
+ 	DOUBLE PRECISION	New_LongRx, New_LatRx
+diff -ru orig/Profile.f90 mod/Profile.f90
+--- orig/Profile.f90
++++ mod/Profile.f90
+@@ -47,7 +47,7 @@
+ !
+ 	IMPLICIT			NONE
+ !
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	DOUBLE PRECISION	LongA, LatA, LongB, LatB
+ !
+@@ -99,7 +99,7 @@
+ 	  LOY = LongA + DATAN2D(SDIR * SIDD * CLA, CODD - SLA * DD)
+ !	  get Information of new point:
+ 		CALL Point_info (LOY, LAY, T_Prof(PC), M_Prof(PC))
+-		IF (slant) T_Prof(PC) = T_Prof(PC) - IIDNNT(o_Tx + K * DBLE(PC-1))
++		IF (slant) T_Prof(PC) = T_Prof(PC) - INT(NINT(o_Tx + K * DBLE(PC-1)),2)
+ 	  IF (HCM_Error .NE. 0) RETURN
+ 	END DO
+ !
+@@ -119,7 +119,7 @@
+ 	  LOY = LongB + DATAN2D(SDIR * SIDD * CLA, CODD - SLA * DD)
+ !	  get Information of new point:
+ 		CALL Point_info (LOY, LAY, T_Prof(PC), M_Prof(PC))
+-		IF (slant) T_Prof(PC) = T_Prof(PC) - IIDNNT(o_Rx - K * DBLE(PN-PC))
++		IF (slant) T_Prof(PC) = T_Prof(PC) - INT(NINT(o_Rx - K * DBLE(PN-PC)),2)
+ 	  IF (HCM_Error .NE. 0) RETURN
+ 	END DO
+ !
+diff -ru orig/TCA_correction_calculation.f90 mod/TCA_correction_calculation.f90
+--- orig/TCA_correction_calculation.f90
++++ mod/TCA_correction_calculation.f90
+@@ -19,7 +19,7 @@
+ !
+ 	IMPLICIT			NONE
+ !
+-	INCLUDE				'HCM_MS_V7_definitions.F90'
++	INCLUDE				'HCM_MS_V7_definitions.f90'
+ !
+ 	INTEGER*4			f_inf, f_sup
+ 	REAL				TCAI, TCAI_corr, TCA_c_100, TCA_c_600, TCA_c_2000

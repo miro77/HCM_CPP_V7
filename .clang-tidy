@@ -1,0 +1,19 @@
+# .clang-tidy — generiert von ai-harness-init. Der lint-Gate ist rot/gruen (Modul 13):
+# die lint-Stage laeuft clang-tidy mit --warnings-as-errors='*', jeder aktivierte Check
+# ist ein harter Fehler. Konservativer Start-Satz; erweiterbar, wenn das Projekt waechst.
+# easily-swappable-parameters ist abgeschaltet (ADR-0005): die C-Schnittstelle und die
+# Fortran-Parameterlisten sind vorgegeben.
+Checks: >
+  -*,
+  bugprone-*,
+  -bugprone-easily-swappable-parameters,
+  clang-analyzer-*,
+  readability-function-cognitive-complexity
+WarningsAsErrors: ''
+# Unverankert: clang-tidy sieht den Header-Pfad absolut (/src/src/...), ein '^src/'
+# traefe ihn nie.
+HeaderFilterRegex: '(^|/)src/'
+FormatStyle: none
+CheckOptions:
+  - key: readability-function-cognitive-complexity.Threshold
+    value: '25'

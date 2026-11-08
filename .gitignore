@@ -1,0 +1,14 @@
+# Build trees
+/build/
+/build-*/
+/out/
+/_baseline/
+
+# IDE
+/.vs/
+/.vscode/
+/.idea/
+CMakeUserPresets.json
+
+# gfortran reference build output
+/fortran/gfortran/out/
